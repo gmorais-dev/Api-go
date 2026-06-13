@@ -17,6 +17,8 @@ Orquestrador de web scraping concorrente em Go usando `worker pool`.
 
 ```text
 main.go
+Dockerfile
+docker-compose.yml
 internal/
   config/
   model/
@@ -27,7 +29,7 @@ mock-site/
 input/
 ```
 
-## Como executar
+## Como executar localmente
 
 ### 1. Subir o mock local
 
@@ -42,6 +44,43 @@ go run .
 ```
 
 O resultado sera salvo em `output/results.csv`.
+
+## Como executar com Docker
+
+### 1. Build da imagem
+
+```bash
+docker build -t api-go-scraper .
+```
+
+### 2. Rodar somente a aplicacao em container
+
+Quando usar a imagem diretamente, informe um arquivo de entrada acessivel pelo container e garanta que as URLs apontem para hosts resolviveis dentro do container.
+
+```bash
+docker run --rm \
+  -v "$(pwd)/output:/app/output" \
+  api-go-scraper
+```
+
+## Como executar com Docker Compose
+
+O Compose sobe dois servicos:
+
+- `mock-site`: servidor HTTP estatico para os arquivos em `mock-site/`;
+- `scraper`: aplicacao Go, configurada para ler `input/urls.docker.txt` e acessar `http://mock-site:8080/produto.html` pela rede interna do Compose.
+
+```bash
+docker compose up --build scraper
+```
+
+O resultado sera salvo em `output/results.csv` no host por meio do volume configurado no Compose.
+
+Para remover os containers criados:
+
+```bash
+docker compose down
+```
 
 ## Configuracao por ambiente
 

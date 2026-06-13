@@ -1,0 +1,9 @@
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+output/
+*.csv
+*.log
+.tmp/
+tmp/
