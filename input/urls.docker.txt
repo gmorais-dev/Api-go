@@ -1,0 +1,3 @@
+# Exemplo para execucao via Docker Compose.
+# O servico mock-site e resolvido pelo DNS interno do Compose.
+http://mock-site:8080/produto.html

@@ -1,0 +1,29 @@
+services:
+  mock-site:
+    image: python:3.13-alpine
+    working_dir: /mock-site
+    command: python -m http.server 8080 --bind 0.0.0.0
+    volumes:
+      - ./mock-site:/mock-site:ro
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/produto.html"]
+      interval: 2s
+      timeout: 1s
+      retries: 10
+
+  scraper:
+    build:
+      context: .
+    depends_on:
+      mock-site:
+        condition: service_healthy
+    environment:
+      SCRAPER_INPUT_FILE: input/urls.docker.txt
+      SCRAPER_OUTPUT_FILE: output/results.csv
+      SCRAPER_WORKER_COUNT: 3
+      SCRAPER_JOB_TIMEOUT: 2s
+      SCRAPER_GLOBAL_TIMEOUT: 30s
+    volumes:
+      - ./output:/app/output
